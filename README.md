@@ -46,6 +46,7 @@ Prerequisites:
 ## What can it do?
 
 - Add webpages in the admin interface (http://localhost:8000/admin/) and then use the "freeze" admin action to freeze and persist their frozen HTML.
+  - Once frozen, view the webpage by clicking the "View on Site" button on the webpage's admin page.
 
 ## License
 
