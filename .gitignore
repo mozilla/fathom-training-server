@@ -1,0 +1,7 @@
+db.sqlite3
+.env
+.pytest_cache
+.venv
+node_modules
+npm-debug.log
+build

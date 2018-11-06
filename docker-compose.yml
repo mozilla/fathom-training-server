@@ -1,0 +1,33 @@
+version: "2"
+volumes:
+  pgdb:
+services:
+  webserver:
+    build: .
+    ports:
+      - 8000:8000
+    links:
+      - postgres
+      - selenium
+    volumes:
+      - .:/app/fathom-training-server
+    env_file: docker/webserver.env
+    command: ["pipenv", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  selenium:
+    image: selenium/standalone-firefox
+
+  # -----------------------------
+  # External services
+  # -----------------------------
+
+  postgres:
+    image: postgres:10
+    ports:
+      - 8574:5432
+    environment:
+      POSTGRES_USER: fathom-server
+      POSTGRES_PASSWORD: fathom-server
+      POSTGRES_DB: fathom-server
+    volumes:
+     - pgdb:/var/lib/postgresql/data
