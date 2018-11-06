@@ -22,11 +22,17 @@ class RulesetAdmin(admin.ModelAdmin):
     pass
 
 
+class WebpageFactInline(admin.TabularInline):
+    model = models.WebpageFact
+    fields = ['fact', 'fact_answer']
+
+
 @admin.register(models.Webpage)
 class WebpageAdmin(admin.ModelAdmin):
     fields = ['url', 'short_frozen_html']
     readonly_fields = ['short_frozen_html']
     actions = ['freeze']
+    inlines = [WebpageFactInline]
 
     def short_frozen_html(self, webpage):
         return webpage.frozen_html[:200]

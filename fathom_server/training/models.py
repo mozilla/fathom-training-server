@@ -16,7 +16,7 @@ class Fact(models.Model):
     ))
 
     def __str__(self):
-        return self.key
+        return self.question
 
 
 class FactSet(models.Model):
