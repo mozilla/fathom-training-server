@@ -52,3 +52,8 @@ class WebpageAdmin(admin.ModelAdmin):
             webpage.frozen_html = results['html']
             webpage.save()
         driver.close()
+
+
+@admin.register(models.TrainingRun)
+class TrainingRunModelAdmin(admin.ModelAdmin):
+    pass

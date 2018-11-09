@@ -1,14 +1,20 @@
 version: "2"
 volumes:
   pgdb:
+networks:
+  main:
+    driver: bridge
 services:
   webserver:
     build: .
     ports:
       - 8000:8000
-    links:
+    depends_on:
       - postgres
       - selenium
+    networks:
+      - main
+    container_name: webserver
     volumes:
       - .:/app/fathom-training-server
     env_file: docker/webserver.env
@@ -16,6 +22,9 @@ services:
 
   selenium:
     image: selenium/standalone-firefox
+    networks:
+      - main
+    container_name: selenium
 
   # -----------------------------
   # External services
@@ -30,4 +39,7 @@ services:
       POSTGRES_PASSWORD: fathom-server
       POSTGRES_DB: fathom-server
     volumes:
-     - pgdb:/var/lib/postgresql/data
+      - pgdb:/var/lib/postgresql/data
+    networks:
+      - main
+    container_name: postgres
