@@ -1,4 +1,4 @@
-FROM python:3.6.5-slim
+FROM python:2.7.15-slim
 
 WORKDIR /app/fathom-training-server/
 RUN groupadd --gid 10001 app && useradd -g app --uid 10001 --shell /usr/sbin/nologin app

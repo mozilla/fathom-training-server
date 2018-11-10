@@ -8,10 +8,11 @@ django = "*"
 dj-database-url = "*"
 "psycopg2" = "*"
 selenium = "*"
+celery = "*"
 
 [dev-packages]
 "flake8" = "*"
 docker-compose = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "2.7.15"

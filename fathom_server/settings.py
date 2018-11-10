@@ -2,11 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 import os
-from pathlib import Path
 
 import dj_database_url
 
-BASE_DIR = Path(__file__).joinpath('..', '..').resolve()
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = True
 

@@ -1,7 +1,8 @@
-from django.urls import path
+from django.conf.urls import url
 
 from fathom_server.training import views
 
+
 urlpatterns = [
-    path('webpages/<int:webpage_id>/', views.view_frozen_webpage, name='view-frozen-webpage'),
+    url(r'webpages/(\d+)/', views.view_frozen_webpage, name='view-frozen-webpage'),
 ]

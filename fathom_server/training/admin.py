@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
@@ -38,7 +40,7 @@ class WebpageAdmin(admin.ModelAdmin):
         return webpage.frozen_html[:200]
 
     def freeze(self, request, queryset):
-        with open(settings.BASE_DIR.joinpath('build', 'freeze.bundle.js')) as f:
+        with open(os.path.join(settings.BASE_DIR, 'build', 'freeze.bundle.js')) as f:
             freeze_script = f.read()
 
         driver = webdriver.Remote(
@@ -46,7 +48,7 @@ class WebpageAdmin(admin.ModelAdmin):
             desired_capabilities=DesiredCapabilities.FIREFOX,
         )
         for webpage in queryset:
-            print(f'Freezing {webpage.url}...')
+            print('Freezing {}...'.format(webpage.url))
             driver.get(webpage.url)
             results = driver.execute_async_script(freeze_script)
             webpage.frozen_html = results['html']
