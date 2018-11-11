@@ -1,7 +1,6 @@
 import os
 
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from marionette_driver.marionette import Marionette
 
 from django.conf import settings
 from django.contrib import admin
@@ -43,17 +42,23 @@ class WebpageAdmin(admin.ModelAdmin):
         with open(os.path.join(settings.BASE_DIR, 'build', 'freeze.bundle.js')) as f:
             freeze_script = f.read()
 
-        driver = webdriver.Remote(
-            command_executor='http://selenium:4444/wd/hub',
-            desired_capabilities=DesiredCapabilities.FIREFOX,
-        )
-        for webpage in queryset:
-            print('Freezing {}...'.format(webpage.url))
-            driver.get(webpage.url)
-            results = driver.execute_async_script(freeze_script)
-            webpage.frozen_html = results['html']
-            webpage.save()
-        driver.close()
+        client = None
+        try:
+            client = Marionette(bin=settings.FIREFOX_BIN, headless=True)
+            client.start_session()
+
+            for webpage in queryset:
+                print('Freezing {}...'.format(webpage.url))
+                client.navigate(webpage.url)
+                results = client.execute_async_script(
+                    freeze_script,
+                    script_timeout=1000 * 60 * 5,
+                )
+                webpage.frozen_html = results['html']
+                webpage.save()
+        finally:
+            if client:
+                client.cleanup()
 
 
 @admin.register(models.TrainingRun)

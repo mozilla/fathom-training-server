@@ -7,8 +7,10 @@ name = "pypi"
 django = "*"
 dj-database-url = "*"
 "psycopg2" = "*"
-selenium = "*"
 celery = "*"
+mozdownload = "*"
+mozinstall = "*"
+marionette-driver = "*"
 
 [dev-packages]
 "flake8" = "*"
