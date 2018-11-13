@@ -47,6 +47,7 @@ class WebpageFact(models.Model):
 
 class TrainingRun(models.Model):
     ruleset = models.ForeignKey(Ruleset, on_delete=models.CASCADE)
-    coefficients = models.TextField(blank=True)
-    training_pages = models.ManyToManyField(Webpage, related_name='training_runs')
-    testing_pages = models.ManyToManyField(Webpage, related_name='testing_runs')
+    initial_coefficients = models.TextField(blank=True)
+    training_pages = models.ManyToManyField(Webpage, related_name='training_runs', blank=True)
+    testing_pages = models.ManyToManyField(Webpage, related_name='testing_runs', blank=True)
+    final_coefficients = models.TextField(blank=True)

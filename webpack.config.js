@@ -7,17 +7,15 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const merge = require('webpack-merge');
 
 const ROOT_DIR = path.resolve(__dirname);
 const BUILD_DIR = path.resolve(ROOT_DIR, 'build');
 
-module.exports = {
+const common = {
   target: 'web',
   mode: 'development',
   context: ROOT_DIR,
-  entry: {
-    freeze: './js/freeze',
-  },
   output: {
     path: BUILD_DIR,
     filename: '[name].bundle.js',
@@ -36,13 +34,6 @@ module.exports = {
   node: {
     fs: 'empty',
   },
-  plugins: [
-    new webpack.BannerPlugin({
-      banner: 'const marionetteScriptFinished = arguments[0];',
-      raw: true,
-      entryOnly: true,
-    }),
-  ],
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
@@ -50,3 +41,32 @@ module.exports = {
     },
   },
 };
+
+module.exports = [
+  merge(common, {
+    entry: {
+      freeze: './js/freeze',
+      train: './js/train',
+    },
+    plugins: [
+      new webpack.BannerPlugin({
+        banner: 'const marionetteArguments = arguments;',
+        raw: true,
+        entryOnly: true,
+      }),
+    ],
+
+  }),
+  merge(common, {
+    entry: {
+      train_framescript: './js/train_framescript',
+    },
+    plugins: [
+      new webpack.BannerPlugin({
+        banner: 'const global = this;',
+        raw: true,
+        entryOnly: true,
+      }),
+    ],
+  }),
+];
