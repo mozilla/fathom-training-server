@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+  <style>
+    .filler-container {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .webpage-preview {
+      flex: 1 1 auto;
+    }
+
+    .webpage-preview iframe {
+      width: 100%;
+      height: 800px;
+    }
+
+    .fact-forms {
+      flex: 250px;
+    }
+
+    .fact-forms li {
+      list-style-type: none;
+      margin-left: 0;
+      margin-top: 1.4em;
+    }
+
+    .fact-forms textarea {
+      height: 60px;
+    }
+
+    .fact-forms label span {
+      display: block;
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 1.4em;
+    }
+  </style>
+{% endblock %}
+
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }}{% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='training' %}">
+      Training
+    </a>
+    &rsaquo;
+      {% if has_change_permission %}
+        <a href="{% url 'admin:training_factset_changelist' %}">
+          Factsets
+        </a>
+      {% else %}
+        FactSets
+      {% endif %}
+    &rsaquo; Fill Facts
+  </div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <form
+    action="{% url 'admin:fill_factset_form' factset.id|admin_urlquote webpage.id|admin_urlquote %}"
+    method="post"
+    novalidate
+  >
+    {% csrf_token %}
+    <h1>Fact Filler</h1>
+    <div class="filler-container">
+      <div class="webpage-preview">
+        <p>
+          Webpage: {{ webpage.url }}
+        </p>
+        <iframe src="{{ webpage.get_absolute_url }}"></iframe>
+      </div>
+      <ul class="fact-forms">
+        {% for form in forms %}
+          <li>
+            {{ form.non_field_errors }}
+            <label>
+              <span>{{ form.instance.fact.question }}</span>
+              {{ form.fact_answer }}
+              {{ form.fact_answer.errors }}
+            </label>
+          </li>
+        {% endfor %}
+        <li>
+          <div class="submit-row">
+            <input type="submit" value="Save">
+          </div>
+        </li>
+      </ul>
+    </div>
+  </form>
+</div>
+{% endblock %}
