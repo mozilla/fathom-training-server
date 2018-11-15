@@ -1,3 +1,5 @@
+from hashlib import sha256
+
 from django.db import models
 from django.urls import reverse
 
@@ -28,9 +30,13 @@ class Ruleset(models.Model):
     fact_set = models.ForeignKey(FactSet, blank=True, null=True, on_delete=models.SET_NULL)
 
 
+def _frozen_html_upload_to(instance, filename):
+    return 'frozen_webpages/{}.html'.format(sha256(instance.url).hexdigest())
+
+
 class Webpage(models.Model):
-    url = models.URLField()
-    frozen_html = models.TextField(blank=True)
+    url = models.URLField(unique=True)
+    frozen_html = models.FileField(blank=True, upload_to=_frozen_html_upload_to)
 
     def get_absolute_url(self):
         return reverse('view-frozen-webpage', args=[self.id])

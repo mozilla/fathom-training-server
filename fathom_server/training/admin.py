@@ -9,6 +9,7 @@ from django import forms
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin, messages
+from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404, redirect, render
 
 from fathom_server.training.models import (
@@ -124,7 +125,9 @@ class WebpageAdmin(admin.ModelAdmin):
     inlines = [WebpageFactInline]
 
     def short_frozen_html(self, webpage):
-        return webpage.frozen_html[:200]
+        if webpage.frozen_html:
+            return webpage.frozen_html.read(200)
+        return ''
 
     def freeze(self, request, queryset):
         with open(os.path.join(settings.BASE_DIR, 'build', 'freeze.bundle.js')) as f:
@@ -142,7 +145,7 @@ class WebpageAdmin(admin.ModelAdmin):
                     freeze_script,
                     script_timeout=1000 * 60 * 5,
                 )
-                webpage.frozen_html = results['html']
+                webpage.frozen_html.save(webpage.url, ContentFile(results['html']))
                 webpage.save()
         finally:
             if client:
