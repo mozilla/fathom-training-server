@@ -151,6 +151,15 @@ class WebpageAdmin(admin.ModelAdmin):
 
 @admin.register(TrainingRun)
 class TrainingRunModelAdmin(admin.ModelAdmin):
+    def get_field_queryset(self, db, db_field, request):
+        if db_field.name == 'training_pages' or db_field.name == 'testing_pages':
+            return Webpage.objects.defer('frozen_html')
+        return super(TrainingRunModelAdmin, self).get_field_queryset(db, db_field, request)
+
+    def _changeform_view(self, request, object_id, form_url, extra_context):
+        import pdb; pdb.set_trace()
+        return super(TrainingRunModelAdmin, self)._changeform_view(request, object_id, form_url, extra_context)
+
     def get_urls(self):
         urls = super(TrainingRunModelAdmin, self).get_urls()
         extra_urls = [
