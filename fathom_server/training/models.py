@@ -22,12 +22,20 @@ class Fact(models.Model):
 
 
 class FactSet(models.Model):
+    name = models.CharField(max_length=255, default='New Factset')
     facts = models.ManyToManyField(Fact)
+
+    def __str__(self):
+        return self.name
 
 
 class Ruleset(models.Model):
+    name = models.CharField(max_length=255, default='New Ruleset')
     code = models.TextField()
     fact_set = models.ForeignKey(FactSet, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
 
 
 def _frozen_html_upload_to(instance, filename):

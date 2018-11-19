@@ -197,7 +197,6 @@ class TrainingRunModelAdmin(admin.ModelAdmin):
                 train_script,
                 script_args=(
                     ruleset_path,
-                    os.path.join(settings.BASE_DIR, 'build', 'train_framescript.bundle.js'),
                     list(map(lambda fact: fact.key, facts)),
                     webpages,
                     json.loads(training_run.initial_coefficients),

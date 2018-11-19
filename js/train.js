@@ -4,7 +4,6 @@ ChromeUtils.import("resource://gre/modules/Services.jsm");
 
 const [
   rulesetPath,
-  trainFramescriptPath,
   factNames,
   webpages,
   initialCoefficients,
@@ -48,7 +47,6 @@ class Tuner {
   // Copy-and-pasted from Fathom just to allow solutionCost() to be async.
   // What color is your function?
   async anneal() {
-    dump('starting anneal');
     const window = Services.wm.getMostRecentWindow('navigator:browser');
     const tabs = [];
     for (const webpage of this.webpages) {
@@ -57,12 +55,11 @@ class Tuner {
       });
     }
     Services.mm.loadFrameScript(`file://${this.rulesetPath}`, true);
-    dump("frame scripts loaded");
 
     let temperature = this.INITIAL_TEMPERATURE;
     let currentSolution = this.initialCoefficients;
     let bestSolution = currentSolution;
-    let currentCost = await this.solutionCost(tabs, currentSolution);
+    let currentCost = await this.solutionCost(webpages, currentSolution);
     let bestCost = currentCost;
 
     const seenSolutions = new Map(); // solution => cost
@@ -94,7 +91,9 @@ class Tuner {
           }
         }
         // Exit if we're not moving:
-        if (startCost === currentCost) { break; }
+        if (startCost === currentCost) {
+          break;
+        }
       }
       temperature *= this.COOLING_FRACTION;
     }
@@ -108,11 +107,10 @@ class Tuner {
    * Rulesets webext, where user rulesets are developed.
    */
   async whetherTabsSucceeded(webpages, coefficients) {
-    dump('doing a match');
     return Promise.all(
       webpages.map(webpage => new Promise(resolve => {
         const mm = webpage.tab.linkedBrowser.messageManager;
-        function complete(facts) {
+        function complete({data: facts}) {
           mm.removeMessageListener('matchResult', complete);
           for (const factName of factNames) {
             if (webpage.facts[factName] !== facts[factName]) {
